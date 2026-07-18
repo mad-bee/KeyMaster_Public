@@ -108,6 +108,7 @@ When break-in is off, the active key LED flashes with a short off period. When b
 | `40` / button 3 | Kenwood TS-590S |
 | `30` / button 4 | Kenwood TS-590SG |
 | `20` / button 5 | Yaesu FT-710 |
+| `17` / button 6 | Kenwood TS-890S |
 
 The radio choice is saved to EEPROM on the next scheduled settings write.
 
@@ -120,6 +121,7 @@ The radio choice is saved to EEPROM on the next scheduled settings write.
 | QRP Labs QMX | 9600 baud | Band and CW speed status; band, CW speed, keyer, monitor volume, and practice/break-in control |
 | Kenwood TS-590S | 9600 baud | Band, CW speed, keyer, and monitor status; band, CW speed, keyer, monitor, and break-in control |
 | Kenwood TS-590SG | 9600 baud | Band, CW speed, keyer, and monitor status; band, CW speed, keyer, monitor, and break-in control |
+| Kenwood TS-890S | 9600 baud | Band, CW speed, keyer, monitor, and break-in status/control |
 
 FT818 and IC7300 identifiers exist in the source but do not yet have drivers. Selecting an unsupported type falls back to the FTDX10 driver.
 
@@ -214,9 +216,8 @@ ADC thresholds are tied to the resistor values used by the control board. See [d
 | `QMXRadio.h/.cpp` | QMX CAT/menu driver |
 | `TS590SRadio.h/.cpp` | Kenwood TS-590S CAT driver |
 | `TS590SGRadio.h/.cpp` | Kenwood TS-590SG CAT driver |
+| `TS890SRadio.h/.cpp` | Kenwood TS-890S CAT driver |
 
 ## Known Limitations
-
-- The firmware and radio share the hardware serial port, which can complicate uploading and debugging.
-- CAT queues show a temporary LED warning pattern when a command cannot be queued.
+- TS890S has no band stack register for 60m, so KeyMaster loads a typical CW frequency
 - QMX status polling reports only frequency/band and CW speed; changes made on the QMX to keyer, monitor, or break-in are not read back.
