@@ -1,5 +1,9 @@
 # KeyMaster
 
+![Front panel](FrontPage.png)
+
+
+
 KeyMaster is a front-panel controller for sharing one radio between four CW key inputs. Each key input has its own saved operating bank, so changing from one key to another can also change CW speed, keyer mode, break-in mode, and band. Sidetone/monitor volume is shared across all banks.
 
 The unit can run standalone with no radio connected. When a supported radio is connected by CAT, KeyMaster sends the front-panel changes to the radio and reads back the status values that the selected radio driver supports.
@@ -9,6 +13,10 @@ Firmware version: `02`
 ## Front Panel
 
 ![Annotated KeyMaster front panel](keymaster-front-panel-annotated.png)
+
+## Rear Panel
+
+![Annotated KeyMaster rear panel](RearPanelDiagram.png)
 
 ## Quick Start
 
