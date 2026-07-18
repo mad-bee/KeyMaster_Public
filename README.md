@@ -8,7 +8,7 @@ Firmware version: `02`
 
 ## Front Panel
 
-![Annotated KeyMaster front panel](docs/images/keymaster-front-panel-annotated.png)
+![Annotated KeyMaster front panel](keymaster-front-panel-annotated.png)
 
 ## Quick Start
 
