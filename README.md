@@ -2,8 +2,6 @@
 
 ![Front panel](FrontPage.png)
 
-
-
 KeyMaster is a front-panel controller for sharing one radio between four CW key inputs. Each key input has its own saved operating bank, so changing from one key to another can also change CW speed, keyer mode, break-in mode, and band. Sidetone/monitor volume is shared across all banks.
 
 The unit can run standalone with no radio connected. When a supported radio is connected by CAT, KeyMaster sends the front-panel changes to the radio and reads back the status values that the selected radio driver supports.
@@ -67,14 +65,28 @@ The eight band buttons select:
 
 The small LEDs above the band row show the selected band. Some temporary displays reuse the band LEDs for short animations, then return to the selected band display.
 
+### Encoder Direction Settings
+
+The direction of each encoder can be reversed independently to suit the encoders fitted to a particular unit:
+
+| Encoder | How to reverse its direction |
+| --- | --- |
+| `WPM/Kyr` | Hold its push-button while powering on |
+| `Vol/Bk` | Hold its push-button while powering on |
+
+Keep the button held throughout the startup LED chase. When the confirmation LEDs appear, release it. The outermost key/band LEDs mean that the selected encoder is now reversed; the innermost LEDs mean normal direction. Repeat the same procedure to toggle it back. Each direction setting is saved immediately and remains in effect after power-off.
+
 ### WPM/Kyr Control
 
 | Action | Result |
 | --- | --- |
 | Turn `WPM/Kyr` | Change CW speed for the active bank |
 | Press `WPM/Kyr` | Toggle keyer mode for the active bank |
+| Hold `WPM/Kyr` while powering on | Reverse the WPM encoder direction for this unit |
 
 When encoder-value display is enabled, changing WPM briefly shows the value on the LEDs before the display returns to normal.
+
+To correct a unit whose WPM direction is reversed, hold `WPM/Kyr` throughout the startup LED chase. Keep holding until the confirmation LEDs appear, then release. The outermost key/band LEDs indicate reversed direction; the innermost LEDs indicate normal direction. The choice is saved immediately and does not alter bank or radio settings.
 
 Keyer feedback on the band LEDs:
 
@@ -89,8 +101,11 @@ Keyer feedback on the band LEDs:
 | --- | --- |
 | Turn `Vol/Bk` | Change the shared monitor/sidetone volume |
 | Press `Vol/Bk` | Toggle break-in for the active bank |
+| Hold `Vol/Bk` while powering on | Reverse the volume encoder direction for this unit |
 
 When encoder-value display is enabled, changing volume briefly shows the value on the LEDs before the display returns to normal.
+
+The volume direction is configured in the same way as WPM: hold `Vol/Bk` throughout the startup LED chase, wait for the confirmation LEDs, then release. WPM and volume directions are saved independently.
 
 Break-in feedback:
 
@@ -101,13 +116,13 @@ Break-in feedback:
 
 When break-in is off, the active key LED flashes with a short off period. When break-in is on, the active key LED stays solid.
 
-## Selecting The Radio Type
+## Selecting The Radio Type And CAT Baud Rate
 
 1. Short press `Key3` so bank 3 is the active bank.
 2. Hold `Key3` for 3 seconds to enter radio-selection mode.
-3. All band LEDs illuminate. The LED for the current radio flashes.
-4. Press one of the band buttons below.
-5. Hold `Key3` again for 3 seconds to leave radio-selection mode.
+3. All band and key LEDs illuminate. The current radio and baud-rate LEDs flash.
+4. Press a band button to select the radio and a key button to select the baud rate.
+5. Hold `Key3` again for 3 seconds to leave radio-selection mode. A short Key3 press selects 19200 baud.
 
 | Band button | Radio driver |
 | ---: | --- |
@@ -118,11 +133,18 @@ When break-in is off, the active key LED flashes with a short off period. When b
 | `20` / button 5 | Yaesu FT-710 |
 | `17` / button 6 | Kenwood TS-890S |
 
-The radio choice is saved to EEPROM on the next scheduled settings write.
+| Key button | CAT baud rate |
+| ---: | ---: |
+| `Key1` | 4800 |
+| `Key2` | 9600 |
+| `Key3` | 19200 |
+| `Key4` | 38400 |
+
+Set this rate to the same CAT baud rate configured in the radio. It can be changed independently of the selected radio driver. The radio choice is saved on the next scheduled settings write; the baud choice is saved immediately and remains in effect after power-off. On an upgrade with no saved baud choice, Yaesu radios default to 38400 and the other current drivers default to 9600.
 
 ## Supported Radios
 
-| Radio | CAT rate | Implemented status/control |
+| Radio | Default CAT rate | Implemented status/control |
 | --- | ---: | --- |
 | Yaesu FTDX10 | 38400 baud | Band, CW speed, keyer, monitor volume, break-in |
 | Yaesu FT-710 | 38400 baud | Band, CW speed, keyer, monitor volume, break-in |
@@ -132,6 +154,54 @@ The radio choice is saved to EEPROM on the next scheduled settings write.
 | Kenwood TS-890S | 9600 baud | Band, CW speed, keyer, monitor, and break-in status/control |
 
 FT818 and IC7300 identifiers exist in the source but do not yet have drivers. Selecting an unsupported type falls back to the FTDX10 driver.
+
+### TS-590S/TS-590SG Straight-Key And Bug Wiring
+
+The TS-590S and TS-590SG have separate rear-panel inputs: `KEY` is intended for a straight key or external keyer, while `PADDLE` feeds the radio's internal electronic keyer. KeyMaster cannot move its keying output electrically between those two radio sockets; it provides one switched key line for each selected input. The TS-590 CAT command set also has no command that changes the `PADDLE` socket directly between paddle and straight-key input modes.
+
+KeyMaster works around this hardware limitation by using the radio's Bug key function. Keyer on disables Bug mode and gives normal electronic/iambic paddle operation. Keyer off enables Bug mode: the dit contact still generates automatic dots, but the dah contact is manually timed and therefore behaves like a straight-key input. A straight key or mechanical bug used through KeyMaster must consequently be wired only to the dah side of a stereo plug, leaving the dit contact completely unconnected.
+
+Use a 6.3 mm (1/4 inch) TRS stereo plug in the TS-590 `PADDLE` socket. With the radio's dot/dash reversal setting at its normal OFF value, the connections are:
+
+```text
+                    6.3 mm TRS plug into TS-590 PADDLE
+
+ KeyMaster key line -------------------------------- RING  (DAH / dash)
+
+ DIT contact: no wire; leave electrically floating - TIP   (DIT / dot)
+
+ KeyMaster key common ------------------------------ SLEEVE (common/GND)
+
+                         straight key or bug contact
+ KeyMaster key line -----------o/ o---------------- KeyMaster key common
+```
+
+Do not use a mono TS plug in the `PADDLE` socket. A mono plug can short the ring contact to the sleeve, which would hold the dah input keyed. Do not link the tip and ring together: in Bug mode, grounding the tip asks the internal keyer to generate automatic dots and will not behave as a straight key.
+
+The complete signal path is therefore:
+
+```text
+Straight key or mechanical bug
+        |
+        | closes one contact
+        v
+KeyMaster selected key input and multiplexer
+        |
+        | single key line plus common
+        v
+TRS ring (DAH) and sleeve only; TRS tip left floating
+        |
+        v
+TS-590 PADDLE socket
+        |
+        +-- Keyer ON  -> Bug mode OFF -> normal paddle/iambic behaviour
+        |
+        `-- Keyer OFF -> Bug mode ON  -> manually timed DAH contact
+```
+
+This arrangement deliberately uses the `PADDLE` socket, not the separate `KEY` socket, so KeyMaster can change between electronic-keyer and straight-key-style operation through CAT without physically changing plugs. It is an emulation imposed by the TS-590 hardware: in keyer-off mode the radio is technically in Bug mode, not a true straight-key input mode. CW message memory is unavailable while Bug mode is enabled. If the radio's dot/dash reversal option is enabled, the physical tip and ring roles are exchanged; disable that option for the wiring shown above.
+
+For the FTDX10 rear RS-232C connection used by KeyMaster, change `232C RATE` on the radio—not `CAT RATE`, which controls the USB CAT port. The FTDX10 driver uses the radio's required 8N2 serial framing.
 
 ## LED Messages
 
@@ -163,6 +233,7 @@ On blank or invalid EEPROM, KeyMaster starts on input 1 with automatic key switc
 | Symptom | Things to check |
 | --- | --- |
 | Radio does not respond to controls | Confirm the selected radio type, CAT cable, radio CAT baud rate, and that the radio is powered |
+| An encoder changes values in the wrong direction | Hold that encoder's push-button while powering on to reverse its saved direction |
 | KeyMaster works until the radio is unplugged | This should not happen in current firmware; if it does, note the LED pattern and selected radio type |
 | Active key LED keeps flashing | Break-in is off for that bank; press `Vol/Bk` to toggle it |
 | The wrong key bank is selected when keying | Check whether automatic key-based input switching is enabled |
@@ -227,5 +298,7 @@ ADC thresholds are tied to the resistor values used by the control board. See [d
 | `TS890SRadio.h/.cpp` | Kenwood TS-890S CAT driver |
 
 ## Known Limitations
-- TS890S has no band stack register for 60m, so KeyMaster loads a typical CW frequency
+
+- The firmware and radio share the hardware serial port, which can complicate uploading and debugging.
+- CAT queues show a temporary LED warning pattern when a command cannot be queued.
 - QMX status polling reports only frequency/band and CW speed; changes made on the QMX to keyer, monitor, or break-in are not read back.
