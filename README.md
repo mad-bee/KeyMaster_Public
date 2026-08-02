@@ -157,49 +157,69 @@ FT818 and IC7300 identifiers exist in the source but do not yet have drivers. Se
 
 ### TS-590S/TS-590SG Straight-Key And Bug Wiring
 
-The TS-590S and TS-590SG have separate rear-panel inputs: `KEY` is intended for a straight key or external keyer, while `PADDLE` feeds the radio's internal electronic keyer. KeyMaster cannot move its keying output electrically between those two radio sockets; it provides one switched key line for each selected input. The TS-590 CAT command set also has no command that changes the `PADDLE` socket directly between paddle and straight-key input modes.
+The TS-590S and TS-590SG have separate rear-panel inputs: `KEY` is intended for a straight key or external keyer, while `PADDLE` feeds the radio's internal electronic keyer. KeyMaster connects to the radio's `PADDLE` socket so it can route ordinary iambic paddles as well as straight keys and bugs. The KeyMaster-to-radio cable must therefore be a normal, fully wired TRS paddle cable.
 
-KeyMaster works around this hardware limitation by using the radio's Bug key function. Keyer on disables Bug mode and gives normal electronic/iambic paddle operation. Keyer off enables Bug mode: the dit contact still generates automatic dots, but the dah contact is manually timed and therefore behaves like a straight-key input. A straight key or mechanical bug used through KeyMaster must consequently be wired only to the dah side of a stereo plug, leaving the dit contact completely unconnected.
+The TS-590 CAT command set cannot change the `PADDLE` socket into a true straight-key input. KeyMaster works around this radio limitation by using the TS-590 Bug key function. Keyer on disables Bug mode and gives normal electronic/iambic operation. Keyer off enables Bug mode: dit still generates automatic dots, while dah becomes manually timed and can behave like a straight-key input.
 
-Use a 6.3 mm (1/4 inch) TRS stereo plug in the TS-590 `PADDLE` socket. With the radio's dot/dash reversal setting at its normal OFF value, the connections are:
-
-```text
-                    6.3 mm TRS plug into TS-590 PADDLE
-
- KeyMaster key line -------------------------------- RING  (DAH / dash)
-
- DIT contact: no wire; leave electrically floating - TIP   (DIT / dot)
-
- KeyMaster key common ------------------------------ SLEEVE (common/GND)
-
-                         straight key or bug contact
- KeyMaster key line -----------o/ o---------------- KeyMaster key common
-```
-
-Do not use a mono TS plug in the `PADDLE` socket. A mono plug can short the ring contact to the sleeve, which would hold the dah input keyed. Do not link the tip and ring together: in Bug mode, grounding the tip asks the internal keyer to generate automatic dots and will not behave as a straight key.
-
-The complete signal path is therefore:
+The important isolation is at the individual straight-key or bug connection **into KeyMaster**. It is not in the cable from KeyMaster to the radio:
 
 ```text
-Straight key or mechanical bug
-        |
-        | closes one contact
-        v
-KeyMaster selected key input and multiplexer
-        |
-        | single key line plus common
-        v
-TRS ring (DAH) and sleeve only; TRS tip left floating
-        |
-        v
-TS-590 PADDLE socket
-        |
-        +-- Keyer ON  -> Bug mode OFF -> normal paddle/iambic behaviour
-        |
-        `-- Keyer OFF -> Bug mode ON  -> manually timed DAH contact
+STRAIGHT KEY OR MECHANICAL BUG -> KEYMASTER INPUT
+
+  Key or bug contact
+       o/ o
+       |  |
+       |  +-------------------------------- SLEEVE (common/GND)
+       |
+       +----------------------------------- RING (DAH / dash)
+
+  TIP (DIT / dot) ------------------------- NO CONNECTION
+                                             Leave isolated/floating
+
+
+KEYMASTER OUTPUT -> TS-590 PADDLE
+
+  KeyMaster TIP    (DIT) ------------------ TS-590 TIP    (DIT)
+  KeyMaster RING   (DAH) ------------------ TS-590 RING   (DAH)
+  KeyMaster SLEEVE (common) --------------- TS-590 SLEEVE (common)
+
+  This is a normal, fully wired TRS-to-TRS paddle cable.
 ```
 
-This arrangement deliberately uses the `PADDLE` socket, not the separate `KEY` socket, so KeyMaster can change between electronic-keyer and straight-key-style operation through CAT without physically changing plugs. It is an emulation imposed by the TS-590 hardware: in keyer-off mode the radio is technically in Bug mode, not a true straight-key input mode. CW message memory is unavailable while Bug mode is enabled. If the radio's dot/dash reversal option is enabled, the physical tip and ring roles are exchanged; disable that option for the wiring shown above.
+Use a stereo TRS plug at the KeyMaster end of every straight-key or mechanical-bug lead. Connect the key switch only between ring (dah) and sleeve (common), and leave that plug's tip (dit) terminal completely unwired. The dit conductor must be isolated at this **KeyMaster input plug**. Do not remove or isolate dit in the KeyMaster-to-radio cable.
+
+An ordinary paddle connects to a KeyMaster input normally, with dit, dah, and common all wired. KeyMaster routes both paddle contacts through its multiplexer and the fully wired output cable to the TS-590 `PADDLE` socket. This is why the output cable must retain its tip/dit connection.
+
+```text
+                         Selected KeyMaster input
+                                  |
+        +-------------------------+-------------------------+
+        |                                                   |
+ Straight key or bug                                  Iambic paddle
+ ring + sleeve only                                tip + ring + sleeve
+ tip floating                                              all wired
+        |                                                   |
+        +-------------------------+-------------------------+
+                                  |
+                         KeyMaster multiplexer
+                                  |
+                     normal fully wired TRS cable
+                        tip + ring + sleeve
+                                  |
+                                  v
+                         TS-590 PADDLE socket
+                                  |
+                 +----------------+----------------+
+                 |                                 |
+       Keyer OFF / Bug ON                 Keyer ON / Bug OFF
+       dah manually timed                normal iambic keyer
+```
+
+Do not use a mono TS plug for a straight key or bug at a KeyMaster input. Depending on the socket construction, it can short a paddle contact to common. Do not join tip and ring together: in Bug mode, grounding tip asks the radio's internal keyer to generate automatic dots.
+
+This arrangement deliberately uses the TS-590 `PADDLE` socket rather than its separate `KEY` socket, allowing KeyMaster to select either a fully wired paddle or a dah-only straight key/bug without moving the radio plug. It remains an emulation imposed by the TS-590 hardware: keyer-off mode is technically Bug mode, not a true straight-key input mode, and CW message memory is unavailable while Bug mode is enabled.
+
+The diagrams assume the radio's dot/dash reversal setting is OFF: tip is dit and ring is dah. If reversal is enabled, those physical roles exchange, so disable reversal when using this wiring.
 
 For the FTDX10 rear RS-232C connection used by KeyMaster, change `232C RATE` on the radio—not `CAT RATE`, which controls the USB CAT port. The FTDX10 driver uses the radio's required 8N2 serial framing.
 
