@@ -6,6 +6,8 @@ KeyMaster is a front-panel controller for sharing one radio between four CW key 
 
 The unit can run standalone with no radio connected. When a supported radio is connected by CAT, KeyMaster sends the front-panel changes to the radio and reads back the status values that the selected radio driver supports.
 
+This GitHub repository hold the publicly available instructions and related information. The firmware and schematics are ina limited available repository. To purchase a KeyMaster send M0MZB and email, details avaialable on QRZ.
+
 Firmware version: `02`
 
 ## Front Panel
