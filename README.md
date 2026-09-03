@@ -157,6 +157,8 @@ Set this rate to the same CAT baud rate configured in the radio. It can be chang
 
 FT818 and IC7300 identifiers exist in the source but do not yet have drivers. Selecting an unsupported type falls back to the FTDX10 driver.
 
+For a TS-590S or TS-590SG, set the radio's COM-port baud rate to the same value selected on KeyMaster; the default is 9600 baud. The CAT link uses 8 data bits, no parity, and 1 stop bit. KeyMaster does not use RTS/CTS hardware flow control. Operate in CW or CW-R mode: Kenwood defines VX as break-in control only in a CW mode and as voice VOX control in other modes. The normal band buttons recall the radio's own band-stack entry. Because Kenwood has no 60 m BD band number, KeyMaster loads 5.357 MHz into VFO A and selects VFO A when the 60 m button is pressed.
+
 ### TS-590S/TS-590SG Straight-Key And Bug Wiring
 
 The TS-590S and TS-590SG have separate rear-panel inputs: `KEY` is intended for a straight key or external keyer, while `PADDLE` feeds the radio's internal electronic keyer. KeyMaster connects to the radio's `PADDLE` socket so it can route ordinary iambic paddles as well as straight keys and bugs. The KeyMaster-to-radio cable must therefore be a normal, fully wired TRS paddle cable.
