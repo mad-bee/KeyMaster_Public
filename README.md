@@ -397,9 +397,3 @@ ADC thresholds are tied to the resistor values used by the control board. See [d
 | `TS590SRadio.h/.cpp` | Kenwood TS-590S CAT driver |
 | `TS590SGRadio.h/.cpp` | Kenwood TS-590SG CAT driver |
 | `TS890SRadio.h/.cpp` | Kenwood TS-890S CAT driver |
-
-## Known Limitations
-
-- The firmware and radio share the hardware serial port, which can complicate uploading and debugging.
-- CAT queues show a temporary LED warning pattern when a command cannot be queued.
-- QMX status polling reports only frequency/band and CW speed; changes made on the QMX to keyer, monitor, or break-in are not read back.
