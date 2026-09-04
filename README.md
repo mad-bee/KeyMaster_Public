@@ -128,7 +128,7 @@ When break-in is off, the active key LED flashes with a short off period. When b
 
 | Band button | Radio driver |
 | ---: | --- |
-| `80` / button 1 | Yaesu FTDX10 |
+| `80` / button 1 | Yaesu FTDX10 (also used for the FT-991A) |
 | `60` / button 2 | QRP Labs QMX |
 | `40` / button 3 | Kenwood TS-590S |
 | `30` / button 4 | Kenwood TS-590SG |
@@ -149,6 +149,7 @@ Set this rate to the same CAT baud rate configured in the radio. It can be chang
 | Radio | Default CAT rate | Implemented status/control |
 | --- | ---: | --- |
 | Yaesu FTDX10 | 38400 baud | Band, CW speed, keyer, monitor volume, break-in |
+| Yaesu FT-991A using the FTDX10 driver | 38400 baud | Band, CW speed, keyer, monitor volume, break-in |
 | Yaesu FT-710 | 38400 baud | Band, CW speed, keyer, monitor volume, break-in |
 | QRP Labs QMX | 9600 baud | Band and CW speed status; band, CW speed, keyer, monitor volume, and practice/break-in control |
 | Kenwood TS-590S | 9600 baud | Band, CW speed, keyer, and monitor status; band, CW speed, keyer, monitor, and break-in control |
@@ -157,7 +158,85 @@ Set this rate to the same CAT baud rate configured in the radio. It can be chang
 
 FT818 and IC7300 identifiers exist in the source but do not yet have drivers. Selecting an unsupported type falls back to the FTDX10 driver.
 
-For a TS-590S or TS-590SG, set the radio's COM-port baud rate to the same value selected on KeyMaster; the default is 9600 baud. The CAT link uses 8 data bits, no parity, and 1 stop bit. KeyMaster does not use RTS/CTS hardware flow control. Operate in CW or CW-R mode: Kenwood defines VX as break-in control only in a CW mode and as voice VOX control in other modes. The normal band buttons recall the radio's own band-stack entry. Because Kenwood has no 60 m BD band number, KeyMaster loads 5.357 MHz into VFO A and selects VFO A when the 60 m button is pressed.
+The FT-991A does not have a separately named driver in the radio-selection menu. It is supported through the compatible FTDX10 driver: select the `80` band button when choosing the radio type.
+
+### Radio Setup And CAT Cabling
+
+Always switch off both the radio and KeyMaster before connecting or disconnecting a CAT cable. Select the correct radio driver on KeyMaster and set its CAT baud rate to match the radio.
+
+#### Yaesu FTDX10
+
+On the FTDX10 perform the following menu selections:
+
+- **Operation Setting -> General -> 232C RATE:** `38400` - and configure KeyMaster to the same rate.
+- Power down the radio and KeyMaster, then connect KeyMaster's `12V SERIAL` DB9 connector to the radio's rear `RS-232C` connector using a straight-through DB9 cable. Do not use a null-modem cable.
+
+Be sure to change `232C RATE`, not `CAT RATE`; `CAT RATE` controls the USB CAT connection. The FTDX10 connection uses 8 data bits, no parity, and 2 stop bits.
+
+#### Yaesu FT-991A
+
+When using an FT-991A, select the **Yaesu FTDX10** radio option on KeyMaster. In radio-selection mode this is the `80` band button.
+
+On the FT-991A perform the following menu selections:
+
+- **Menu 028:** `RS232C`
+- **Menu 029:** `38400` - and configure KeyMaster to the same rate.
+- Power down the radio and KeyMaster, then connect KeyMaster's `12V SERIAL` DB9 connector to the FT-991A's rear `GPS/CAT` DB9 connector using a straight-through cable. Do not use a null-modem cable.
+- Power-cycle the radio after changing the serial configuration.
+
+Menu 031 sets the CAT rate for the USB connection, so be sure to use Menu 029 for the rear `GPS/CAT` connector used by KeyMaster.
+
+#### Yaesu FT-710
+
+On the FT-710 perform the following menu selections:
+
+- **Operation Setting -> General -> TUN/LIN PORT SELECT:** `CAT-3`
+- **Operation Setting -> General -> CAT-3 RATE:** `38400` - and configure KeyMaster to the same rate.
+- **Operation Setting -> General -> CAT-1 CAT-3 STOP BIT:** `1 bit`
+- Power down the radio and KeyMaster, then connect KeyMaster's `5V SERIAL` connector to the radio's rear `TUNER/LINEAR` mini-DIN connector using an appropriate KeyMaster-to-FT-710 cable.
+
+The `TUNER/LINEAR` connector provides 5V TTL serial, not RS-232 voltage levels. Do not connect it to KeyMaster's DB9 `12V SERIAL` connector. Selecting `CAT-3` means that this radio connector cannot simultaneously operate an external antenna tuner or linear amplifier.
+
+#### QRP Labs QMX
+
+On a QMX running recent firmware perform the following menu selections:
+
+- **System Config -> Serial 1 on AUX:** `ENABLED`
+- **System Config -> Serial 1 baud:** `9600` - and configure KeyMaster to the same rate.
+- Power down the QMX and KeyMaster, then connect KeyMaster's `5V SERIAL` connector to the QMX `AUX` socket using a suitable stereo 3.5 mm cable.
+
+Wire the cable so that the QMX tip (QMX transmit) connects to KeyMaster receive, the QMX ring (QMX receive) connects to KeyMaster transmit, and the sleeves provide the common ground. This is a logic-level serial connection; do not connect it to KeyMaster's DB9 `12V SERIAL` connector. If `Serial 1 on AUX` is absent, install a newer QMX firmware version that provides the AUX serial-port option.
+
+#### Kenwood TS-590S
+
+On the TS-590S perform the following menu selection:
+
+- **Menu 61 - COM port baud rate:** `9600` - and configure KeyMaster to the same rate.
+- Power down the radio and KeyMaster, then connect KeyMaster's `12V SERIAL` DB9 connector to the radio's rear `COM` connector using a straight-through DB9 cable. Do not use a null-modem cable.
+- Power-cycle the radio after changing the COM-port rate.
+
+The connection uses 8 data bits, no parity, and 1 stop bit. KeyMaster does not use RTS/CTS hardware flow control. Use Menu 61, not Menu 62, which controls the USB connection. Operate the radio in CW or CW-R mode: Kenwood defines `VX` as break-in control only in a CW mode and as voice VOX control in other modes.
+
+#### Kenwood TS-590SG
+
+On the TS-590SG perform the following menu selection:
+
+- **Menu 67 - COM port baud rate:** `9600` - and configure KeyMaster to the same rate.
+- Power down the radio and KeyMaster, then connect KeyMaster's `12V SERIAL` DB9 connector to the radio's rear `COM` connector using a straight-through DB9 cable. Do not use a null-modem cable.
+- Power-cycle the radio after changing the COM-port rate.
+
+The connection uses 8 data bits, no parity, and 1 stop bit. KeyMaster does not use RTS/CTS hardware flow control. Use Menu 67, not Menu 68, which controls the USB connection. Operate the radio in CW or CW-R mode: Kenwood defines `VX` as break-in control only in a CW mode and as voice VOX control in other modes.
+
+For both TS-590 models, the normal band buttons recall the radio's own band-stack entry. Because Kenwood has no 60 m `BD` band number, KeyMaster loads 5.357 MHz into VFO A and selects VFO A when the 60 m button is pressed.
+
+#### Kenwood TS-890S
+
+On the TS-890S perform the following menu selection:
+
+- **Menu 7-00 - Baud Rate (COM Port):** `9600` - and configure KeyMaster to the same rate.
+- Power down the radio and KeyMaster, then connect KeyMaster's `12V SERIAL` DB9 connector to the radio's rear `COM` connector using a straight-through DB9 cable. Do not use a null-modem cable.
+
+The connection uses 8 data bits, no parity, and 1 stop bit. KeyMaster does not use RTS/CTS hardware flow control. Use Menu 7-00, not Menu 7-01 or 7-02, which configure the USB virtual COM ports.
 
 ### TS-590S/TS-590SG Straight-Key And Bug Wiring
 
@@ -224,8 +303,6 @@ Do not use a mono TS plug for a straight key or bug at a KeyMaster input. Depend
 This arrangement deliberately uses the TS-590 `PADDLE` socket rather than its separate `KEY` socket, allowing KeyMaster to select either a fully wired paddle or a dah-only straight key/bug without moving the radio plug. It remains an emulation imposed by the TS-590 hardware: keyer-off mode is technically Bug mode, not a true straight-key input mode, and CW message memory is unavailable while Bug mode is enabled.
 
 The diagrams assume the radio's dot/dash reversal setting is OFF: tip is dit and ring is dah. If reversal is enabled, those physical roles exchange, so disable reversal when using this wiring.
-
-For the FTDX10 rear RS-232C connection used by KeyMaster, change `232C RATE` on the radio—not `CAT RATE`, which controls the USB CAT port. The FTDX10 driver uses the radio's required 8N2 serial framing.
 
 ## LED Messages
 
