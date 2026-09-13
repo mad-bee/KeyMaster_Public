@@ -67,6 +67,18 @@ The eight band buttons select:
 
 The small LEDs above the band row show the selected band. Some temporary displays reuse the band LEDs for short animations, then return to the selected band display.
 
+On KeyMaster firmware version 5 and later, with a Yaesu FTDX10, FT-991A (using the FTDX10 option), or FT-710 selected, hold one of the first five band buttons for three seconds to change operating mode instead of changing band. Earlier firmware versions do not provide this mode-selection feature.
+
+| Held band button | Operating mode |
+| --- | --- |
+| `80` | CW-L |
+| `60` | CW-U |
+| `40` | LSB |
+| `30` | USB |
+| `20` | AM |
+
+Release the button before three seconds for the normal band-selection action. This long-press feature is not active for other radio drivers or for the `17`, `15`, and `10` buttons.
+
 ### Encoder Direction Settings
 
 The direction of each encoder can be reversed independently to suit the encoders fitted to a particular unit:
